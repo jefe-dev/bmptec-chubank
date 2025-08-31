@@ -1,6 +1,7 @@
 using BMPTec.ChuBank.Api.Data;
 using BMPTec.ChuBank.Api.Repositories;
 using BMPTec.ChuBank.Api.Services;
+using BMPTec.ChuBank.Api.Validators;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,10 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ITransferService, TransferService>();
 builder.Services.AddHttpClient<IHolidayService, BrasilApiHolidayService>();
+
+// Controllers + FluentValidation
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountCreateDtoValidator>());
 
 // API Versioning
 builder.Services.AddApiVersioning(options =>
