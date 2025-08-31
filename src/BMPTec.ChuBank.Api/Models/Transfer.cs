@@ -11,11 +11,9 @@ namespace BMPTec.ChuBank.Api.Models
 
         [Required]
         public Guid FromAccountId { get; set; }
-        public Account? FromAccount { get; set; }
 
         [Required]
         public Guid ToAccountId { get; set; }
-        public Account? ToAccount { get; set; }
 
         public decimal Amount { get; set; }
 

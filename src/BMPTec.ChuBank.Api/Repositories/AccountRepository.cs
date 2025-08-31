@@ -34,13 +34,12 @@ namespace BMPTec.ChuBank.Api.Repositories
             await _db.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Transfer>> GetTransfersAsync(Guid accountId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Transfer>> GetTransfersAsync(Guid accountId, DateTime startDate, DateTime endDate)
         {
-            var q = _db.Transfers.AsNoTracking()
+            return await _db.Transfers.AsNoTracking()
                 .Where(t => (t.FromAccountId == accountId || t.ToAccountId == accountId)
-                            && t.CreatedAt >= from && t.CreatedAt <= to)
-                .AsEnumerable();
-            return Task.FromResult(q);
+                             && t.CreatedAt >= startDate.ToUniversalTime() && t.CreatedAt <= endDate.ToUniversalTime())
+                .ToListAsync();
         }
     }
 }

@@ -9,6 +9,6 @@ namespace BMPTec.ChuBank.Api.Repositories
         Task<Account?> GetByCpfAsync(string cpf);
         Task<IEnumerable<Account>> GetAllAsync();
         Task UpdateAsync(Account account);
-        Task<IEnumerable<Transfer>> GetTransfersAsync(Guid accountId, DateTime from, DateTime to);
+        Task<IEnumerable<Transfer>> GetTransfersAsync(Guid accountId, DateTime startDate, DateTime endDate);
     }
 }

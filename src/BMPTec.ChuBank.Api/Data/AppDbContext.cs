@@ -24,8 +24,6 @@ namespace BMPTec.ChuBank.Api.Data
             {
                 eb.HasKey(t => t.Id);
                 eb.Property(t => t.Amount).HasColumnType("numeric(18,2)");
-                eb.HasOne(t => t.FromAccount).WithMany().HasForeignKey(t => t.FromAccountId).OnDelete(DeleteBehavior.Restrict);
-                eb.HasOne(t => t.ToAccount).WithMany().HasForeignKey(t => t.ToAccountId).OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
