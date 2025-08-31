@@ -2,6 +2,7 @@ using BMPTec.ChuBank.Api.Data;
 using BMPTec.ChuBank.Api.Repositories;
 using BMPTec.ChuBank.Api.Services;
 using BMPTec.ChuBank.Api.Validators;
+using BMPTec.ChuBank.Api.Helpers;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,34 @@ builder.Services.AddApiVersioning(options =>
     options.ReportApiVersions = true;
 });
 
+// JWT
+builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+var jwtSection = configuration.GetSection("Jwt");
+var jwtKey = jwtSection.GetValue<string>("Key") ?? "dev-key-please-change";
+var jwtIssuer = jwtSection.GetValue<string>("Issuer") ?? "bmptc";
+var jwtAudience = jwtSection.GetValue<string>("Audience") ?? "bmptc_clients";
+var key = Encoding.ASCII.GetBytes(jwtKey);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+builder.Services.AddAuthorization();
+
 // Swagger + JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -67,9 +96,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddAuthorization();
-builder.Services.AddControllers();
-
 var app = builder.Build();
 
 // Migrate on startup (optional)
@@ -90,5 +116,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();
