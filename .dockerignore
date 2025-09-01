@@ -1,0 +1,45 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# NuGet packages
+**/*.nupkg
+
+# Test results
+**/*TestResults*
+**/.vs/
+**/.vscode/
+
+# IDE files
+**/.idea/
+**/*.swp
+**/*.swo
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+**/.git/
+**/.gitignore
+**/.gitattributes
+
+# Docker
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+
+# Documentation
+**/README*.md
+**/LICENSE
+
+# Test projects
+**/tests/
+
+# Node modules (if any)
+**/node_modules/
+
+# Logs
+**/logs/
+**/*.log

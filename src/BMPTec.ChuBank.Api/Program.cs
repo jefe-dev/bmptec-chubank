@@ -40,9 +40,9 @@ builder.Services.AddApiVersioning(options =>
 // JWT
 builder.Services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 var jwtSection = configuration.GetSection("Jwt");
-var jwtKey = jwtSection.GetValue<string>("Key") ?? "dev-key-please-change";
-var jwtIssuer = jwtSection.GetValue<string>("Issuer") ?? "bmptc";
-var jwtAudience = jwtSection.GetValue<string>("Audience") ?? "bmptc_clients";
+var jwtKey = jwtSection.GetValue<string>("Key");
+var jwtIssuer = jwtSection.GetValue<string>("Issuer");
+var jwtAudience = jwtSection.GetValue<string>("Audience");
 var key = Encoding.ASCII.GetBytes(jwtKey);
 builder.Services.AddAuthentication(options =>
 {
@@ -124,9 +124,13 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Comentado para desenvolvimento Docker
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllers();
 app.Run();
 
