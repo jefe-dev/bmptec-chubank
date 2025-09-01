@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BMPTec.ChuBank.Api.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,10 +22,10 @@ namespace BMPTec.ChuBank.Api.Controllers.v1
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public IActionResult Login([FromBody] LoginRequestDto request)
         {
-            if (request.Username != "admin" || request.Password != "123456")
-                return Unauthorized("Usuário ou senha inválidos");
+            if (request.Username != "admin" || request.Password != "admin123")
+                return Unauthorized("Invalid username or password");
 
             var claims = new[]
             {
@@ -48,11 +49,5 @@ namespace BMPTec.ChuBank.Api.Controllers.v1
                 token = new JwtSecurityTokenHandler().WriteToken(token)
             });
         }
-    }
-
-    public class LoginRequest
-    {
-        public string? Username { get; set; }
-        public string? Password { get; set; }
     }
 }
