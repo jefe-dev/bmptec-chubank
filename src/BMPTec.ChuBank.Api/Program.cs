@@ -102,7 +102,16 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    // Only migrate if not using InMemory database (for tests)
+    if (db.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+    {
+        db.Database.Migrate();
+    }
+    else
+    {
+        // Ensure database is created for InMemory
+        db.Database.EnsureCreated();
+    }
 }
 
 if (app.Environment.IsDevelopment())
@@ -120,3 +129,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+// Para testes de integração
+public partial class Program { }
