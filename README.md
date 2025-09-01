@@ -36,7 +36,6 @@ dotnet test --verbosity normal
 
 ## 4. Acessos
 
-- **Swagger**: http://localhost:5000/swagger
 - **API**: http://localhost:5000
 - **Health Check**: http://localhost:5000/health
 - **PostgreSQL**: localhost:5432

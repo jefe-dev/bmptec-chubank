@@ -9,7 +9,7 @@ collection:
     meta:
       id: fld_6ade2c27b10241ae810a6237df8a2319
       created: 1756598799579
-      modified: 1756697348561
+      modified: 1756735777784
       sortKey: -1756598839143
     children:
       - url: "{{ _.api_url }}/auth/login"
@@ -17,7 +17,7 @@ collection:
         meta:
           id: req_e1ca5e60c27541748cd116ff023dd7fc
           created: 1756598275732
-          modified: 1756697386028
+          modified: 1756735094823
           isPrivate: false
           sortKey: -1756598806304
         method: POST
@@ -26,7 +26,7 @@ collection:
           text: |-
             {
               "username": "admin",
-              "password": "123456"
+              "password": "admin123"
             }
         headers:
           - name: Content-Type
@@ -59,7 +59,7 @@ collection:
         meta:
           id: req_b28fb817d13c4a90b4bd27715325bb7e
           created: 1756598108509
-          modified: 1756600723423
+          modified: 1756735115168
           isPrivate: false
           sortKey: -1756600471215
         method: POST
@@ -67,9 +67,9 @@ collection:
           mimeType: application/json
           text: |-
             {
-              "name": "Ana",
-              "cpf": "98786543210",
-              "balance": 10000
+              "name": "Ana Paula",
+              "cpf": "98786543218",
+              "balance": 100000
             }
         headers:
           - name: Content-Type
@@ -87,12 +87,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.api_url }}/accounts/9e7c7db4-6cf9-46f9-99d6-9d0cfc8d599a"
+      - url: "{{ _.api_url }}/accounts/1b3af992-fd69-4993-87a2-af709749ed2e"
         name: Get By ID
         meta:
           id: req_b49594131bbd435c8afc500b13f6d8e3
           created: 1756600471115
-          modified: 1756600714901
+          modified: 1756735133348
           isPrivate: false
           sortKey: -1756600471115
         method: GET
@@ -145,7 +145,7 @@ collection:
         meta:
           id: req_0ced7f7c51aa4a2ab9c9d659ffd6f40d
           created: 1756603165536
-          modified: 1756603635778
+          modified: 1756735157777
           isPrivate: false
           sortKey: -1756603165536
         method: POST
@@ -153,9 +153,9 @@ collection:
           mimeType: application/json
           text: |-
             {
-              "fromAccountId": "f6b1ba12-4823-4a00-adf7-39a3bf55f00e",
+              "fromAccountId": "1b3af992-fd69-4993-87a2-af709749ed2e",
               "toAccountId": "4f61ee34-64aa-4f39-90c0-25784327758e",
-              "amount": 300
+              "amount": 3000
             }
         headers:
           - name: Content-Type
@@ -180,27 +180,27 @@ collection:
       modified: 1756598839043
       sortKey: -1756598839043
     children:
-      - url: https://localhost:5000/statement
+      - url: "{{ _.api_url }}/statement"
         name: Get All
         meta:
           id: req_940a870379fa4016888a6f10ef638743
           created: 1756603651589
-          modified: 1756697018435
+          modified: 1756735833869
           isPrivate: false
           sortKey: -1756603651589
         method: GET
         parameters:
           - id: pair_aa9930253b0e4351835cc30f6966a3ef
             name: accountId
-            value: f6b1ba12-4823-4a00-adf7-39a3bf55f00e
+            value: 1b3af992-fd69-4993-87a2-af709749ed2e
             disabled: false
           - id: pair_0230f68ce0f64b5fba38cd1d0fc7fb46
             name: startDate
-            value: 2025-08-15
+            value: 2025-08-31
             disabled: false
           - id: pair_0c37d20d43174743a694f6127e8aeb55
             name: endDate
-            value: 2025-08-31
+            value: 2025-09-15
             disabled: false
         headers:
           - name: User-Agent
@@ -221,15 +221,15 @@ cookieJar:
   meta:
     id: jar_636fa12343b31ae8df70969a0a284da08746c723
     created: 1756598108455
-    modified: 1756697348560
+    modified: 1756735777782
 environments:
   name: Base Environment
   meta:
     id: env_636fa12343b31ae8df70969a0a284da08746c723
     created: 1756598108454
-    modified: 1756697348560
+    modified: 1756735777783
     isPrivate: false
   data:
     api_url: https://localhost:8080/api/v1
     api_url_docker: http://localhost:5000/api/v1
-    auth_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc1NjcwMDk0NywiaXNzIjoiYm1wdGVjIiwiYXVkIjoiYm1wdGVjX2NsaWVudHMifQ.rV8c_nKR091QezuGeZMnwGG9TdnazqzJBTC71N15FxU
+    auth_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc1NjczOTM3NywiaXNzIjoiYm1wdGMiLCJhdWQiOiJibXB0Y19jbGllbnRzIn0.tUIPWog-LcoJLhzu_2fQms3mxV0motFbKgnREfbRFe0
