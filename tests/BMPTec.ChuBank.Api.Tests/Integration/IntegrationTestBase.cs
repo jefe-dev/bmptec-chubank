@@ -1,10 +1,9 @@
-using BMPTec.ChuBank.Api.Data;
+using BMPTec.ChuBank.Api.Models;
+using BMPTec.ChuBank.Api.Repositories;
 using BMPTec.ChuBank.Api.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -16,37 +15,37 @@ namespace BMPTec.ChuBank.Api.Tests.Integration
     {
         protected readonly WebApplicationFactory<Program> _factory;
         protected readonly HttpClient _client;
+        protected readonly Mock<IAccountRepository> _mockAccountRepo;
+        protected readonly Mock<ITransferService> _mockTransferService;
+        protected readonly Mock<IHolidayService> _mockHolidayService;
 
         public IntegrationTestBase(WebApplicationFactory<Program> factory)
         {
+            _mockAccountRepo = new Mock<IAccountRepository>();
+            _mockTransferService = new Mock<ITransferService>();
+            _mockHolidayService = new Mock<IHolidayService>();
+
             _factory = factory.WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services =>
                 {
-                    // Remove the real database
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
-                    if (descriptor != null)
-                        services.Remove(descriptor);
+                    // Remove existing services
+                    var accountRepoDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IAccountRepository));
+                    if (accountRepoDescriptor != null)
+                        services.Remove(accountRepoDescriptor);
 
-                    // Add in-memory database
-                    services.AddDbContext<AppDbContext>(options =>
-                    {
-                        options.UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}");
-                    });
+                    var transferServiceDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ITransferService));
+                    if (transferServiceDescriptor != null)
+                        services.Remove(transferServiceDescriptor);
 
-                    // Mock Holiday Service for tests
-                    var mockHolidayService = new Mock<IHolidayService>();
-                    mockHolidayService.Setup(x => x.IsBusinessDayAsync(It.IsAny<DateTime>()))
-                                     .ReturnsAsync(true);
-                    
-                    // Remove existing service if present
-                    var holidayDescriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(IHolidayService));
-                    if (holidayDescriptor != null)
-                        services.Remove(holidayDescriptor);
-                    
-                    services.AddSingleton(mockHolidayService.Object);
+                    var holidayServiceDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IHolidayService));
+                    if (holidayServiceDescriptor != null)
+                        services.Remove(holidayServiceDescriptor);
+
+                    // Add mocks
+                    services.AddSingleton(_mockAccountRepo.Object);
+                    services.AddSingleton(_mockTransferService.Object);
+                    services.AddSingleton(_mockHolidayService.Object);
                 });
             });
 
@@ -58,7 +57,7 @@ namespace BMPTec.ChuBank.Api.Tests.Integration
             var loginRequest = new
             {
                 Username = "admin",
-                Password = "123456"
+                Password = "admin123"
             };
 
             var json = JsonSerializer.Serialize(loginRequest);

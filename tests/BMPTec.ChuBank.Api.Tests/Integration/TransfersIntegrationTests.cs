@@ -1,4 +1,5 @@
 using BMPTec.ChuBank.Api.DTOs;
+using BMPTec.ChuBank.Api.Models;
 using BMPTec.ChuBank.Api.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Moq;
@@ -6,9 +7,9 @@ using System.Net;
 
 namespace BMPTec.ChuBank.Api.Tests.Integration
 {
-    public class TransfersMockedIntegrationTests : MockedIntegrationTestBase
+    public class TransfersIntegrationTests : IntegrationTestBase
     {
-        public TransfersMockedIntegrationTests(WebApplicationFactory<Program> factory) : base(factory) { }
+        public TransfersIntegrationTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task CreateTransfer_WithValidData_ShouldReturnOk()

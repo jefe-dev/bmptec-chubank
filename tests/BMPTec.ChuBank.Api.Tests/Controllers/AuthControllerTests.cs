@@ -1,112 +1,91 @@
 using BMPTec.ChuBank.Api.Controllers.v1;
+using BMPTec.ChuBank.Api.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
+using Xunit;
 
 namespace BMPTec.ChuBank.Api.Tests.Controllers
 {
     public class AuthControllerTests
     {
-        private readonly Mock<IConfiguration> _configurationMock;
         private readonly AuthController _controller;
+        private readonly Mock<IConfiguration> _mockConfiguration;
 
         public AuthControllerTests()
         {
-            _configurationMock = new Mock<IConfiguration>();
-            SetupConfiguration();
-            _controller = new AuthController(_configurationMock.Object);
-        }
+            _mockConfiguration = new Mock<IConfiguration>();
+            _mockConfiguration.Setup(x => x["Jwt:Key"]).Returns("super-secret-key-that-is-long-enough-for-hs256-algorithm-123456789");
+            _mockConfiguration.Setup(x => x["Jwt:Issuer"]).Returns("test-issuer");
+            _mockConfiguration.Setup(x => x["Jwt:Audience"]).Returns("test-audience");
 
-        private void SetupConfiguration()
-        {
-            _configurationMock.Setup(x => x["Jwt:Key"]).Returns("super-secret-key-with-at-least-256-bits-for-security-purposes");
-            _configurationMock.Setup(x => x["Jwt:Issuer"]).Returns("ChuBank.Api");
-            _configurationMock.Setup(x => x["Jwt:Audience"]).Returns("ChuBank.Users");
+            _controller = new AuthController(_mockConfiguration.Object);
         }
 
         [Fact]
         public void Login_WithValidCredentials_ShouldReturnOk()
         {
             // Arrange
-            var loginRequest = new LoginRequest
-            {
-                Username = "admin",
-                Password = "123456"
-            };
+            var loginRequest = new LoginRequestDto("admin", "admin123");
 
             // Act
             var result = _controller.Login(loginRequest);
 
             // Assert
-            Assert.IsType<OkObjectResult>(result);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.NotNull(okResult.Value);
         }
 
         [Fact]
         public void Login_WithInvalidCredentials_ShouldReturnUnauthorized()
         {
             // Arrange
-            var loginRequest = new LoginRequest
-            {
-                Username = "wrong",
-                Password = "wrong"
-            };
+            var loginRequest = new LoginRequestDto("wrong", "wrong");
 
             // Act
             var result = _controller.Login(loginRequest);
 
             // Assert
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+            Assert.Equal("Invalid username or password", unauthorizedResult.Value);
         }
 
         [Fact]
         public void Login_WithValidCredentials_ShouldReturnValidToken()
         {
             // Arrange
-            var loginRequest = new LoginRequest
-            {
-                Username = "admin",
-                Password = "123456"
-            };
+            var loginRequest = new LoginRequestDto("admin", "admin123");
 
             // Act
             var result = _controller.Login(loginRequest);
 
             // Assert
-            var okResult = result as OkObjectResult;
-            Assert.NotNull(okResult);
-            Assert.NotNull(okResult.Value);
-            
-            // Verify it contains a token property
-            var tokenProperty = okResult.Value.GetType().GetProperty("token");
-            Assert.NotNull(tokenProperty);
-            
-            var tokenValue = tokenProperty.GetValue(okResult.Value)?.ToString();
-            Assert.NotNull(tokenValue);
-            Assert.NotEmpty(tokenValue);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var jsonString = JsonSerializer.Serialize(okResult.Value);
+            var response = JsonSerializer.Deserialize<JsonElement>(jsonString);
+            Assert.True(response.TryGetProperty("token", out var tokenProperty));
+            var token = tokenProperty.GetString();
+            Assert.NotNull(token);
+            Assert.NotEmpty(token);
         }
 
         [Theory]
-        [InlineData("admin", "wrongpassword")]
-        [InlineData("wronguser", "123456")]
-        [InlineData("", "123456")]
+        [InlineData("admin", "wrongpass")]
+        [InlineData("wronguser", "admin123")]
+        [InlineData("", "admin123")]
         [InlineData("admin", "")]
         public void Login_WithInvalidCredentials_ShouldReturnUnauthorizedMessage(string username, string password)
         {
             // Arrange
-            var loginRequest = new LoginRequest
-            {
-                Username = username,
-                Password = password
-            };
+            var loginRequest = new LoginRequestDto(username, password);
 
             // Act
             var result = _controller.Login(loginRequest);
 
             // Assert
-            var unauthorizedResult = result as UnauthorizedObjectResult;
-            Assert.NotNull(unauthorizedResult);
-            Assert.Equal("Usuário ou senha inválidos", unauthorizedResult.Value);
+            var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+            Assert.Equal("Invalid username or password", unauthorizedResult.Value);
         }
     }
 }

@@ -27,7 +27,7 @@ dotnet test --verbosity normal
 
 ## Credenciais de Teste JWT Token
 - **Usuário**: admin
-- **Senha**: 123456
+- **Senha**: admin123
 
 ## Endpoints Principais
 

@@ -24,7 +24,7 @@ namespace BMPTec.ChuBank.Api.Tests.Models
             // Arrange
             var id = Guid.NewGuid();
             var name = "João Silva";
-            var cpf = "12345678901";
+            var cpf = "12345678909";
             var balance = 1000.50m;
 
             // Act

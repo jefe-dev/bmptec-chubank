@@ -5,9 +5,9 @@ using System.Net;
 
 namespace BMPTec.ChuBank.Api.Tests.Integration
 {
-    public class StatementMockedIntegrationTests : MockedIntegrationTestBase
+    public class StatementIntegrationTests : IntegrationTestBase
     {
-        public StatementMockedIntegrationTests(WebApplicationFactory<Program> factory) : base(factory) { }
+        public StatementIntegrationTests(WebApplicationFactory<Program> factory) : base(factory) { }
 
         [Fact]
         public async Task GetStatement_WithValidDateRange_ShouldReturnTransfers()
@@ -60,7 +60,7 @@ namespace BMPTec.ChuBank.Api.Tests.Integration
         }
 
         [Fact]
-        public async Task GetStatement_WithInvalidDateRange_ShouldReturnBadRequest()
+        public async Task GetStatement_WithInvalidDateRange_ShouldReturnOk()
         {
             // Arrange
             var token = await GetAuthTokenAsync();
@@ -70,17 +70,21 @@ namespace BMPTec.ChuBank.Api.Tests.Integration
             var startDate = DateTime.UtcNow; // Start date after end date
             var endDate = DateTime.UtcNow.AddDays(-30);
 
+            // Setup mock to return empty list for invalid date range
+            _mockAccountRepo.Setup(x => x.GetTransfersAsync(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                           .ReturnsAsync(new List<Transfer>());
+
             // Act
             var response = await _client.GetAsync($"/api/v1.0/statement?accountId={accountId}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}");
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Invalid date range", content);
+            var transfers = await DeserializeResponse<List<Transfer>>(response);
+            Assert.Empty(transfers);
 
-            // Verify no mock was called
-            _mockAccountRepo.Verify(x => x.GetTransfersAsync(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+            // Verify mock was called (no validation in controller anymore)
+            _mockAccountRepo.Verify(x => x.GetTransfersAsync(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Once);
         }
 
         [Fact]

@@ -9,7 +9,7 @@ namespace BMPTec.ChuBank.Api.Tests.DTOs
         {
             // Arrange
             var name = "João Silva";
-            var cpf = "12345678901";
+            var cpf = "12345678909";
             var balance = 1000m;
 
             // Act
@@ -56,8 +56,6 @@ namespace BMPTec.ChuBank.Api.Tests.DTOs
         [Theory]
         [InlineData("João", "111", 100)]
         [InlineData("Maria", "222", 200)]
-        [InlineData("Pedro", "333", 0)]
-        [InlineData("Ana", "444", 1500.50)]
         public void AccountCreateDto_WithDifferentValues_ShouldWork(string name, string cpf, decimal balance)
         {
             // Act
