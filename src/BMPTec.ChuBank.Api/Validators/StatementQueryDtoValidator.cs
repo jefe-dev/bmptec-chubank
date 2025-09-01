@@ -7,14 +7,12 @@ namespace BMPTec.ChuBank.Api.Validators
     {
         public StatementQueryDtoValidator()
         {
-            // From Date Validation
             RuleFor(x => x.From)
                 .NotEmpty()
                 .WithMessage("Start date is required")
                 .Must(date => date <= DateTime.Today)
                 .WithMessage("Start date cannot be in the future");
 
-            // To Date Validation
             RuleFor(x => x.To)
                 .NotEmpty()
                 .WithMessage("End date is required")

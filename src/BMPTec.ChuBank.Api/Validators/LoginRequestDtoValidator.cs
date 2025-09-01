@@ -7,12 +7,12 @@ namespace BMPTec.ChuBank.Api.Validators
     {
         public LoginRequestDtoValidator()
         {
-            // Username Validation
             RuleFor(x => x.Username)
                 .NotEmpty()
-                .WithMessage("Username is required");
+                .WithMessage("Username is required")
+                .MinimumLength(3)
+                .WithMessage("Username must have at least 3 characters");
 
-            // Password Validation
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .WithMessage("Password is required")
@@ -25,7 +25,6 @@ namespace BMPTec.ChuBank.Api.Validators
                 .Must(BusinessRuleValidator.IsSecurePassword)
                 .WithMessage("Password must contain at least one letter and one number");
 
-            // Additional security validations
             RuleFor(x => x.Password)
                 .Must(ValidatePasswordComplexity)
                 .WithMessage("Password does not meet security requirements");
@@ -36,7 +35,6 @@ namespace BMPTec.ChuBank.Api.Validators
             if (string.IsNullOrEmpty(password))
                 return false;
 
-            // Check if password is too simple (only numbers or only letters)
             if (password.All(char.IsDigit) || password.All(char.IsLetter))
                 return false;
 

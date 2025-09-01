@@ -26,8 +26,6 @@ namespace BMPTec.ChuBank.Api.Services
             var to = await _db.Accounts.FirstOrDefaultAsync(a => a.Id == dto.ToAccountId);
 
             if (from == null || to == null) return new TransferResult(false, "Account not found");
-            if (from.Id == to.Id) return new TransferResult(false, "Cannot transfer to same account");
-            if (dto.Amount <= 0) return new TransferResult(false, "Amount must be positive");
             if (from.Balance < dto.Amount) return new TransferResult(false, "Insufficient funds");
 
             using var tx = await _db.Database.BeginTransactionAsync();
