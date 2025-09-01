@@ -45,13 +45,6 @@ namespace BMPTec.ChuBank.Api.Controllers.v1
             return Ok(acc);
         }
 
-        [HttpGet("/statement")]
-        [Authorize]
-        public async Task<IActionResult> Statement([FromQuery] Guid accountId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-        {
-            if (startDate > endDate) return BadRequest("Invalid date range");
-            var transfers = await _repo.GetTransfersAsync(accountId, startDate, endDate);
-            return Ok(transfers);
-        }
+
     }
 }
